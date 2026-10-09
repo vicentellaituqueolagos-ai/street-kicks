@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Street Kicks - Premium Sneaker Store</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            orange: '#E8A88A',
+                            orangeDark: '#D89474',
+                            orangeHover: '#C27A59',
+                            softBg: '#1C1917',
+                            cardBg: '#262220',
+                            border: '#3D3531'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Urbanist', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Urbanist:wght@700;800;900&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Custom Styles & Scrollbars */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #12100E;
+            color: #E2E8F0;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, .font-display {
+            font-family: 'Urbanist', sans-serif;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #12100E;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3D3531;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #E8A88A;
+        }
+
+        /* Ambient Canvas Background */
+        #bgCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Glassmorphism Cards */
+        .glass-card {
+            background: rgba(38, 34, 32, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(232, 168, 138, 0.15);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(232, 168, 138, 0.4);
+            box-shadow: 0 10px 30px -10px rgba(232, 168, 138, 0.15);
+        }
+
+        /* Soundwave animation bar */
+        @keyframes soundWave {
+            0%, 100% { height: 4px; }
+            50% { height: 18px; }
+        }
+        .bar-anim-1 { animation: soundWave 1.2s ease-in-out infinite; }
+        .bar-anim-2 { animation: soundWave 0.9s ease-in-out infinite 0.2s; }
+        .bar-anim-3 { animation: soundWave 1.4s ease-in-out infinite 0.4s; }
+        .bar-anim-4 { animation: soundWave 1.0s ease-in-out infinite 0.1s; }
+    </style>
+</head>
+<body class="relative min-h-screen text-slate-100 selection:bg-brand-orange selection:text-black">
+
+    <!-- Background Moving Canvas -->
+    <canvas id="bgCanvas"></canvas>
+
+    <!-- TOP BAR WITH AUDIO PLAYER -->
+    <header class="sticky top-0 z-40 w-full glass-card border-b border-brand-border/40 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-4">
+            
+            <!-- Monogram Logo -->
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-orange to-brand-orangeDark flex items-center justify-center text-black font-black font-display text-xl tracking-tighter shadow-lg shadow-brand-orange/20 group-hover:scale-105 transition-transform">
+                    SK
+                </div>
+                <div>
+                    <span class="text-xl font-black tracking-wider font-display text-white block leading-none">STREET<span class="text-brand-orange">KICKS</span></span>
+                    <span class="text-[10px] text-slate-400 tracking-widest uppercase block mt-0.5">Santiago • Premium Footwear</span>
+                </div>
+            </a>
+
+            <!-- Navigation Links -->
+            <nav class="hidden lg:flex items-center space-x-6 text-sm font-medium text-slate-300">
+                <a href="#featured" class="hover:text-brand-orange transition-colors">Destacados</a>
+                <a href="#catalog" class="hover:text-brand-orange transition-colors">Catálogo</a>
+                <a href="#categories" class="hover:text-brand-orange transition-colors">Categorías</a>
+                <a href="#customizer" class="hover:text-brand-orange transition-colors flex items-center gap-1.5 text-brand-orange">
+                    <i class="fa-solid font-bold fa-palette text-xs"></i> Studio 3D
+                </a>
+                <a href="#quiz" class="hover:text-brand-orange transition-colors">Guía & Fit</a>
+            </nav>
+
+            <!-- ULTRA RELAXING MUSIC PLAYER -->
+            <div class="flex items-center gap-3 bg-stone-900/90 border border-brand-orange/30 rounded-full px-3.5 py-1.5 shadow-inner">
+                <!-- Soundwave Equalizer Visualizer -->
+                <div class="flex items-center gap-0.5 h-5 w-5 justify-center cursor-pointer" onclick="audioEngine.togglePlay()" title="Reproducir / Pausar Música Ambient">
+                    <span id="wave1" class="w-1 bg-brand-orange rounded-full h-2"></span>
+                    <span id="wave2" class="w-1 bg-brand-orange rounded-full h-3"></span>
+                    <span id="wave3" class="w-1 bg-brand-orange rounded-full h-1"></span>
+                    <span id="wave4" class="w-1 bg-brand-orange rounded-full h-2"></span>
+                </div>
+
+                <!-- Play/Pause Button -->
+                <button id="btnAudioPlay" onclick="audioEngine.togglePlay()" class="w-7 h-7 rounded-full bg-brand-orange text-black flex items-center justify-center text-xs font-bold hover:bg-brand-orangeDark transition-all shadow-md">
+                    <i id="playIcon" class="fa-solid fa-play ml-0.5"></i>
+                </button>
+
+                <!-- Track Selector Dropdown -->
+                <div class="relative">
+                    <select id="trackSelect" onchange="audioEngine.changeTrack(this.value)" class="bg-stone-800 text-xs text-slate-200 rounded-lg px-2.5 py-1 border border-stone-700 focus:outline-none focus:border-brand-orange cursor-pointer">
+                        <option value="lofi">☕ Lo-Fi Lounge Chill (65 BPM)</option>
+                        <option value="rain">🌧️ Ambient Piano & Rain</option>
+                        <option value="jazz">🎷 Smooth Coffee Shop Jazz</option>
+                    </select>
+                </div>
+
+                <!-- Volume & Mute -->
+                <div class="hidden sm:flex items-center gap-2 border-l border-stone-700 pl-2">
+                    <button id="btnAudioMute" onclick="audioEngine.toggleMute()" class="text-slate-400 hover:text-brand-orange text-xs transition-colors">
+                        <i id="muteIcon" class="fa-solid fa-volume-high"></i>
+                    </button>
+                    <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.4" oninput="audioEngine.setVolume(this.value)" class="w-16 h-1 bg-stone-700 rounded-lg appearance-none cursor-pointer accent-brand-orange">
+                </div>
+            </div>
+
+            <!-- Cart Trigger -->
+            <button onclick="toggleCartModal()" class="relative bg-brand-orange/10 hover:bg-brand-orange/20 border border-brand-orange/30 text-brand-orange p-2.5 rounded-xl flex items-center gap-2 transition-all">
+                <i class="fa-solid fa-bag-shopping text-base"></i>
+                <span class="hidden sm:inline text-xs font-bold text-white" id="cartTotalHeader">$0 CLP</span>
+                <span id="cartBadge" class="absolute -top-1.5 -right-1.5 bg-brand-orange text-black font-black text-[10px] w-5 h-5 rounded-full flex items-center justify-center shadow-lg">0</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="relative pt-12 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            <div class="lg:col-span-7 space-y-6">
+                <div class="inline-flex items-center gap-2 bg-brand-orange/10 border border-brand-orange/30 px-3.5 py-1.5 rounded-full text-xs font-semibold text-brand-orange">
+                    <span class="w-2 h-2 rounded-full bg-brand-orange animate-ping"></span>
+                    Colección Otoño/Invierno Chile 2026
+                </div>
+
+                <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black font-display tracking-tight leading-none text-white">
+                    ELEVATE YOUR <br/>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange via-brand-orangeDark to-amber-200">
+                        STREET CULTURE
+                    </span>
+                </h1>
+
+                <p class="text-slate-300 text-base sm:text-lg max-w-xl font-normal leading-relaxed">
+                    Descubre los sneakers más icónicos del streetwear mundial con despacho express a todo Chile. Transacciones seguras en CLP a través de Transbank Webpay Plus.
+                </p>
+
+                <div class="flex flex-wrap items-center gap-4 pt-2">
+                    <a href="#featured" class="bg-gradient-to-r from-brand-orange to-brand-orangeDark text-stone-950 font-extrabold px-7 py-3.5 rounded-xl shadow-lg shadow-brand-orange/25 hover:brightness-110 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 text-sm">
+                        Explorar Catálogo <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                    <a href="#customizer" class="glass-card text-white font-semibold px-6 py-3.5 rounded-xl hover:border-brand-orange/60 transition-all flex items-center gap-2 text-sm">
+                        <i class="fa-solid fa-wand-magic-sparkles text-brand-orange"></i> Personalizar SVG
+                    </a>
+                </div>
+
+                <!-- Trust Badges -->
+                <div class="grid grid-cols-3 gap-4 pt-6 border-t border-stone-800 text-xs text-slate-400">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-shield-halved text-brand-orange text-base"></i>
+                        <span>100% Originales</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-truck-fast text-brand-orange text-base"></i>
+                        <span>Envíos Todo Chile</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-credit-card text-brand-orange text-base"></i>
+                        <span>Webpay Plus 6 Cuotas</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hero Feature Display Card -->
+            <div class="lg:col-span-5">
+                <div class="relative glass-card rounded-3xl p-6 border border-brand-orange/30 overflow-hidden group">
+                    <div class="absolute -top-24 -right-24 w-60 h-60 bg-brand-orange/20 rounded-full blur-3xl pointer-events-none"></div>
+                    
+                    <span class="bg-brand-orange/20 text-brand-orange font-bold text-xs px-3 py-1 rounded-full uppercase tracking-widest border border-brand-orange/30">
+                        Top Drop de la Semana
+                    </span>
+
+                    <div class="my-6 relative flex items-center justify-center h-64 group-hover:scale-105 transition-transform duration-500">
+                        <!-- Custom Inline SVG Sneaker Art -->
+                        <svg class="w-full h-full drop-shadow-[0_20px_20px_rgba(232,168,138,0.25)]" viewBox="0 0 500 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M50 220 L450 220 L440 250 L60 250 Z" fill="#2A2522" stroke="#E8A88A" stroke-width="2"/>
+                            <path d="M70 220 C90 180 140 160 200 160 L320 160 C380 160 420 180 430 220 Z" fill="#E8A88A" opacity="0.9"/>
+                            <path d="M120 160 L180 80 C220 70 280 80 300 120 L350 160 Z" fill="#D89474"/>
+                            <path d="M190 100 L280 100" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+                            <path d="M185 115 L275 115" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+                            <path d="M180 130 L270 130" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+                            <circle cx="150" cy="180" r="18" fill="#12100E"/>
+                            <path d="M220 185 Q 280 150 360 175" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-xl font-extrabold text-white">Air Jordan 4 Retro "Bred"</h3>
+                            <p class="text-xs text-slate-400">Edición Limitada • Stock Restringido</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-lg font-black text-brand-orange">$189.990 CLP</span>
+                            <button onclick="addToCart('Jordan 4 Retro Bred', 189990, 'https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=600&q=80')" class="mt-1 block bg-brand-orange hover:bg-brand-orangeDark text-stone-950 px-3 py-1.5 rounded-lg font-bold text-xs transition-colors">
+                                Agregar +
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FEATURED SNEAKERS SECTION -->
+    <section id="featured" class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-stone-800/80">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+            <div>
+                <span class="text-brand-orange text-xs font-bold uppercase tracking-widest block mb-1">Selección Exclusiva</span>
+                <h2 class="text-3xl sm:text-4xl font-black text-white font-display">4 SNEAKERS DESTACADOS</h2>
+            </div>
+            <p class="text-slate-400 text-sm max-w-md">
+                Los modelos más cotizados de la escena urbana actual. ¡Puedes subir tus propias fotos para visualizar o personalizar el producto!
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="featuredGrid">
+            <!-- 4 Featured Cards will be dynamically rendered / updated via JS -->
+        </div>
+    </section>
+
+    <!-- EXTENDED CATALOG SECTION -->
+    <section id="catalog" class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-stone-800/80">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
+            <div>
+                <span class="text-brand-orange text-xs font-bold uppercase tracking-widest">Catálogo Completo</span>
+                <h2 class="text-3xl font-black text-white font-display">TODOS LOS MODELOS</h2>
+            </div>
+
+            <!-- Category Filter Tabs -->
+            <div class="flex flex-wrap gap-2 text-xs font-semibold">
+                <button onclick="filterCatalog('all')" class="cat-btn active bg-brand-orange text-stone-950 px-4 py-2 rounded-xl transition-all">Todos</button>
+                <button onclick="filterCatalog('Nike')" class="cat-btn bg-stone-800 hover:bg-stone-700 text-slate-300 px-4 py-2 rounded-xl transition-all">Nike</button>
+                <button onclick="filterCatalog('Adidas')" class="cat-btn bg-stone-800 hover:bg-stone-700 text-slate-300 px-4 py-2 rounded-xl transition-all">Adidas</button>
+                <button onclick="filterCatalog('Jordan')" class="cat-btn bg-stone-800 hover:bg-stone-700 text-slate-300 px-4 py-2 rounded-xl transition-all">Jordan</button>
+                <button onclick="filterCatalog('New Balance')" class="cat-btn bg-stone-800 hover:bg-stone-700 text-slate-300 px-4 py-2 rounded-xl transition-all">New Balance</button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="extendedCatalogGrid">
+            <!-- Extended catalog rendered here -->
+        </div>
+    </section>
+
+    <!-- 8 GLOBAL FOOTWEAR CATEGORIES -->
+    <section id="categories" class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-stone-800/80">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+            <span class="text-brand-orange text-xs font-bold uppercase tracking-widest">Explora por Estilo</span>
+            <h2 class="text-3xl sm:text-4xl font-black text-white font-display">8 CATEGORÍAS GLOBALES</h2>
+            <p class="text-slate-400 text-sm mt-2">Encuentra la silueta exacta que se adecúa a tu estilo de vida y ocasión.</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="categoriesGrid">
+            <!-- 8 Categories generated via JavaScript -->
+        </div>
+    </section>
+
+    <!-- INTERACTIVE SVG CUSTOMIZER STUDIO -->
+    <section id="customizer" class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-stone-800/80">
+        <div class="glass-card rounded-3xl p-6 sm:p-10 border border-brand-orange/30">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                
+                <!-- Left Preview Canvas -->
+                <div class="lg:col-span-7 bg-stone-950/80 rounded-2xl p-6 border border-stone-800 flex flex-col items-center justify-center relative min-h-[340px]">
+                    <span class="absolute top-4 left-4 bg-brand-orange/20 text-brand-orange text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                        Estudio Interactivo 3D/SVG
+                    </span>
+
+                    <div class="w-full max-w-lg my-4">
+                        <svg id="svgSneaker" class="w-full h-auto drop-shadow-[0_15px_25px_rgba(0,0,0,0.6)]" viewBox="0 0 600 350" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Outsole / Sole -->
+                            <path id="part-sole" d="M 60 260 C 120 285 450 285 530 260 L 520 290 C 420 305 100 305 50 290 Z" fill="#FFFFFF" stroke="#333" stroke-width="2" class="cursor-pointer transition-colors" onclick="selectPart('sole')"/>
+                            <!-- Midsole -->
+                            <path id="part-midsole" d="M 60 240 C 120 260 450 260 530 240 L 530 260 C 450 285 120 285 60 260 Z" fill="#E8A88A" stroke="#333" stroke-width="2" class="cursor-pointer transition-colors" onclick="selectPart('midsole')"/>
+                            <!-- Main Upper Body -->
+                            <path id="part-upper" d="M 80 240 C 100 180 180 150 260 150 L 380 150 C 450 150 500 180 520 240 Z" fill="#262220" stroke="#333" stroke-width="2" class="cursor-pointer transition-colors" onclick="selectPart('upper')"/>
+                            <!-- High Collar / Lining -->
+                            <path id="part-collar" d="M 140 170 L 220 70 C 270 60 340 80 370 120 L 400 150 Z" fill="#3B332E" stroke="#333" stroke-width="2" class="cursor-pointer transition-colors" onclick="selectPart('collar')"/>
+                            <!-- Swoosh / Logo Accent -->
+                            <path id="part-logo" d="M 220 200 Q 320 150 440 180 Q 340 220 220 200 Z" fill="#E8A88A" stroke="#333" stroke-width="2" class="cursor-pointer transition-colors" onclick="selectPart('logo')"/>
+                            <!-- Laces -->
+                            <path id="part-laces" d="M 240 100 L 330 100 M 235 120 L 325 120 M 230 140 L 320 140" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" class="cursor-pointer transition-colors" onclick="selectPart('laces')"/>
+                        </svg>
+                    </div>
+
+                    <p class="text-xs text-slate-400 mt-2">Haz clic en cualquier parte del sneaker en la pantalla para modificar su color.</p>
+                </div>
+
+                <!-- Right Customization Controls -->
+                <div class="lg:col-span-5 space-y-6">
+                    <div>
+                        <span class="text-brand-orange text-xs font-bold uppercase tracking-widest block">SK Custom Lab</span>
+                        <h2 class="text-3xl font-black text-white font-display">CREA TU EDICIÓN ÚNICA</h2>
+                    </div>
+
+                    <!-- Selected Part Indicator -->
+                    <div class="bg-stone-900 p-3 rounded-xl border border-stone-800 flex items-center justify-between text-xs">
+                        <span class="text-slate-400">Sección seleccionada:</span>
+                        <span id="activePartName" class="font-bold text-brand-orange uppercase tracking-wider">Midsole / Suela Media</span>
+                    </div>
+
+                    <!-- Quick Color Swatches -->
+                    <div>
+                        <label class="text-xs font-semibold text-slate-300 block mb-2">Paleta de Colores Exclusiva:</label>
+                        <div class="flex flex-wrap gap-2.5">
+                            <button onclick="applyColor('#E8A88A')" class="w-8 h-8 rounded-full border-2 border-white/20 bg-[#E8A88A] hover:scale-110 transition-transform"></button>
+                            <button onclick="applyColor('#D89474')" class="w-8 h-8 rounded-full border-2 border-white/20 bg-[#D89474] hover:scale-110 transition-transform"></button>
+                            <button onclick="applyColor('#262220')" class="w-8 h-8 rounded-full border-2 border-white/20 bg-[#262220] hover:scale-110 transition-transform"></button>
+                            <button onclick="applyColor('#FFFFFF')" class="w-8 h-8 rounded-full border-2 border-white/20 bg-[#FFFFFF] hover:scale-110 transition-transform"></button>
+                            <button onclick="applyColor('#101010')" class="w-8 h-8 rounded-full border-2 border-white/20 bg-[#101010] hover:scale-110 transition-transform"></button>
+                            <button onclick="applyColor('#EF4444')" class="w-8 h-8 rounded-full border-2 border-white/20 bg-[#EF4444] hover:scale-110 transition-transform"></button>
+                            <button onclick="applyColor('#3B82F6')" class="w-8 h-8 rounded-full border-2 border-white/20 bg-[#3B82F6] hover:scale-110 transition-transform"></button>
+                            <button onclick="applyColor('#EAB308')" class="w-8 h-8 rounded-full border-2 border-white/20 bg-[#EAB308] hover:scale-110 transition-transform"></button>
+                        </div>
+                    </div>
+
+                    <!-- Custom Hex Picker -->
+                    <div class="flex items-center gap-3">
+                        <label class="text-xs text-slate-400">Color personalizado:</label>
+                        <input type="color" id="customColorPicker" onchange="applyColor(this.value)" class="w-10 h-8 rounded border-none bg-transparent cursor-pointer">
+                    </div>
+
+                    <!-- Material Texture Selector -->
+                    <div>
+                        <label class="text-xs font-semibold text-slate-300 block mb-2">Material Premium:</label>
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <button class="bg-stone-800 hover:bg-stone-700 text-slate-200 py-2 px-3 rounded-lg border border-stone-700 text-left font-medium">
+                                👟 Cuero Vacuno Grano
+                            </button>
+                            <button class="bg-stone-800 hover:bg-stone-700 text-slate-200 py-2 px-3 rounded-lg border border-stone-700 text-left font-medium">
+                                ✨ Gamuza Soft Suede
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="pt-2 flex items-center gap-3">
+                        <button onclick="addCustomToCart()" class="flex-1 bg-brand-orange hover:bg-brand-orangeDark text-stone-950 font-extrabold py-3 rounded-xl transition-all text-sm shadow-lg shadow-brand-orange/20">
+                            Añadir Custom al Carrito ($139.990 CLP)
+                        </button>
+                        <button onclick="resetCustomizer()" class="bg-stone-800 hover:bg-stone-700 text-slate-300 p-3 rounded-xl text-xs" title="Resetear colores">
+                            <i class="fa-solid fa-rotate-right"></i>
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTWEAR STYLE & FIT GUIDE + QUIZ -->
+    <section id="quiz" class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-stone-800/80">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Interactive Style Quiz -->
+            <div class="lg:col-span-7 glass-card rounded-3xl p-6 sm:p-8">
+                <span class="text-brand-orange text-xs font-bold uppercase tracking-widest">Asistente Inteligente</span>
+                <h2 class="text-2xl sm:text-3xl font-black text-white font-display mb-4">ENCUENTRA TU SNEAKER IDEAL</h2>
+                
+                <div id="quizContainer" class="space-y-4">
+                    <!-- Dynamic Quiz Step -->
+                    <div id="quizStep1" class="space-y-3">
+                        <p class="text-sm text-slate-300 font-semibold">1. ¿Cuál es tu vibra o estilo de vestir predominante?</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                            <button onclick="nextQuizStep('streetwear')" class="p-3 rounded-xl bg-stone-900 hover:bg-stone-800 border border-stone-800 text-left transition-all">
+                                🔥 <strong>Urban Streetwear Oversized</strong>
+                                <span class="block text-slate-400 text-[11px] mt-0.5">Siluetas chunky, retros y llamativas.</span>
+                            </button>
+                            <button onclick="nextQuizStep('minimal')" class="p-3 rounded-xl bg-stone-900 hover:bg-stone-800 border border-stone-800 text-left transition-all">
+                                ✨ <strong>Minimalista & Clean</strong>
+                                <span class="block text-slate-400 text-[11px] mt-0.5">Líneas simples en tonos neutros o blancos.</span>
+                            </button>
+                            <button onclick="nextQuizStep('retro')" class="p-3 rounded-xl bg-stone-900 hover:bg-stone-800 border border-stone-800 text-left transition-all">
+                                🏀 <strong>Classic Heritage & Basketball</strong>
+                                <span class="block text-slate-400 text-[11px] mt-0.5">High-tops e íconos de los 80s y 90s.</span>
+                            </button>
+                            <button onclick="nextQuizStep('runner')" class="p-3 rounded-xl bg-stone-900 hover:bg-stone-800 border border-stone-800 text-left transition-all">
+                                🏃 <strong>Techwear & Performance</strong>
+                                <span class="block text-slate-400 text-[11px] mt-0.5">Máximo confort con tecnología de amortiguación.</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="quizResult" class="hidden space-y-3 p-4 bg-brand-orange/10 rounded-2xl border border-brand-orange/30">
+                        <h4 class="font-extrabold text-brand-orange text-base">¡Recomendación Personalizada!</h4>
+                        <p id="quizResultText" class="text-xs text-slate-200 leading-relaxed"></p>
+                        <button onclick="resetQuiz()" class="text-xs text-slate-400 hover:text-white underline">Repetir Quiz</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fit Guide Table -->
+            <div class="lg:col-span-5 glass-card rounded-3xl p-6 sm:p-8">
+                <span class="text-brand-orange text-xs font-bold uppercase tracking-widest">Guía de Tallas Chile</span>
+                <h2 class="text-2xl font-black text-white font-display mb-4">TABLA DE CONVERSIÓN</h2>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-300">
+                        <thead class="bg-stone-900 text-brand-orange uppercase font-bold border-b border-stone-800">
+                            <tr>
+                                <th class="p-2">CLP / EU</th>
+                                <th class="p-2">US Men</th>
+                                <th class="p-2">US Women</th>
+                                <th class="p-2">CM</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-stone-800">
+                            <tr><td class="p-2 font-bold text-white">39 EU</td><td class="p-2">7.0</td><td class="p-2">8.5</td><td class="p-2">25.0 cm</td></tr>
+                            <tr><td class="p-2 font-bold text-white">40 EU</td><td class="p-2">7.5</td><td class="p-2">9.0</td><td class="p-2">25.5 cm</td></tr>
+                            <tr><td class="p-2 font-bold text-white">41 EU</td><td class="p-2">8.5</td><td class="p-2">10.0</td><td class="p-2">26.5 cm</td></tr>
+                            <tr><td class="p-2 font-bold text-white">42 EU</td><td class="p-2">9.0</td><td class="p-2">10.5</td><td class="p-2">27.0 cm</td></tr>
+                            <tr><td class="p-2 font-bold text-white">43 EU</td><td class="p-2">10.0</td><td class="p-2">11.5</td><td class="p-2">28.0 cm</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-[11px] text-slate-400 mt-3">💡 Tip: Para siluetas de caña alta o con horma reducida, recomendamos pedir media talla adicional.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-stone-800 bg-stone-950 py-12 px-4 sm:px-6 lg:px-8 text-xs text-slate-400">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="space-y-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-lg bg-brand-orange text-black font-black flex items-center justify-center font-display">SK</div>
+                    <span class="text-white font-bold tracking-wider font-display text-base">STREET KICKS</span>
+                </div>
+                <p>La tienda de streetwear número 1 de Chile. Diseñado con experiencia auditiva relajante en tiempo real.</p>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-3 uppercase tracking-wider">Navegación</h4>
+                <ul class="space-y-2">
+                    <li><a href="#featured" class="hover:text-brand-orange">Modelos Destacados</a></li>
+                    <li><a href="#catalog" class="hover:text-brand-orange">Catálogo General</a></li>
+                    <li><a href="#customizer" class="hover:text-brand-orange">Personalizador SVG</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-3 uppercase tracking-wider">Medios de Pago</h4>
+                <p class="mb-2">Aceptamos todas las tarjetas de crédito y débito chilenas a través de Transbank Webpay Plus.</p>
+                <div class="flex gap-2 text-xl text-slate-300">
+                    <i class="fa-brands fa-cc-visa"></i>
+                    <i class="fa-brands fa-cc-mastercard"></i>
+                    <i class="fa-solid fa-credit-card"></i>
+                </div>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-3 uppercase tracking-wider">Contacto Santiago</h4>
+                <p>Av. Providencia 2124, Providencia</p>
+                <p>contacto@streetkicks.cl</p>
+                <p>+56 9 8765 4321</p>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto border-t border-stone-900 mt-8 pt-6 text-center text-slate-500">
+            &copy; 2026 Street Kicks Chile. Todos los derechos reservados.
+        </div>
+    </footer>
+
+    <!-- SHOPPING CART SLIDE-OVER MODAL -->
+    <div id="cartModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex justify-end">
+        <div class="w-full max-w-md bg-stone-900 h-full p-6 flex flex-col justify-between border-l border-brand-orange/30 shadow-2xl">
+            <div>
+                <div class="flex items-center justify-between pb-4 border-b border-stone-800">
+                    <h3 class="text-xl font-black text-white font-display flex items-center gap-2">
+                        <i class="fa-solid fa-bag-shopping text-brand-orange"></i> Tu Carrito de Compras
+                    </h3>
+                    <button onclick="toggleCartModal()" class="text-slate-400 hover:text-white text-lg">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- Cart Items Container -->
+                <div id="cartItemsList" class="my-6 space-y-4 max-h-[50vh] overflow-y-auto pr-1">
+                    <!-- Rendered dynamically -->
+                </div>
+            </div>
+
+            <div class="border-t border-stone-800 pt-4 space-y-3">
+                <div class="flex justify-between text-sm text-slate-300">
+                    <span>Subtotal:</span>
+                    <span id="cartSubtotal" class="font-bold text-white">$0 CLP</span>
+                </div>
+                <div class="flex justify-between text-sm text-brand-orange">
+                    <span>Descuento Promo (STREET2026):</span>
+                    <span id="cartDiscount">-$0 CLP</span>
+                </div>
+                <div class="flex justify-between text-lg font-black text-white border-t border-stone-800 pt-2">
+                    <span>Total a Pagar:</span>
+                    <span id="cartFinalTotal" class="text-brand-orange">$0 CLP</span>
+                </div>
+
+                <button onclick="openWebpayModal()" class="w-full bg-gradient-to-r from-brand-orange to-brand-orangeDark text-stone-950 font-black py-3.5 rounded-xl shadow-lg shadow-brand-orange/20 hover:brightness-110 transition-all text-sm uppercase tracking-wider flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-lock"></i> Pagar con Webpay Plus
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- WEBPAY TRANSBANK SIMULATOR MODAL -->
+    <div id="webpayModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-stone-900 rounded-3xl max-w-lg w-full p-6 border border-red-500/30 shadow-2xl space-y-5">
+            <div class="flex items-center justify-between border-b border-stone-800 pb-3">
+                <div class="flex items-center gap-2">
+                    <div class="bg-red-600 text-white font-black px-2 py-0.5 rounded text-xs">Webpay</div>
+                    <span class="text-white font-bold text-sm">Transbank Plus Chile</span>
+                </div>
+                <button onclick="closeWebpayModal()" class="text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="bg-stone-950 p-4 rounded-xl border border-stone-800 space-y-2">
+                <div class="flex justify-between text-xs text-slate-400">
+                    <span>Comercio:</span>
+                    <span class="text-white font-semibold">Street Kicks SpA</span>
+                </div>
+                <div class="flex justify-between text-xs text-slate-400">
+                    <span>Monto Total:</span>
+                    <span id="webpayAmount" class="text-brand-orange font-extrabold text-sm">$0 CLP</span>
+                </div>
+            </div>
+
+            <form onsubmit="processWebpayPayment(event)" class="space-y-4 text-xs">
+                <div>
+                    <label class="block text-slate-300 font-semibold mb-1">Banco Emisor:</label>
+                    <select required class="w-full bg-stone-800 text-white rounded-lg p-2.5 border border-stone-700">
+                        <option value="">Selecciona tu banco...</option>
+                        <option value="bchile">Banco de Chile / Edwards</option>
+                        <option value="bestado">BancoEstado (RutPay)</option>
+                        <option value="santander">Banco Santander</option>
+                        <option value="bci">BCI / MACH</option>
+                        <option value="scotia">Scotiabank</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-slate-300 font-semibold mb-1">Número de Tarjeta (Simulado):</label>
+                    <input type="text" placeholder="1234 •••• •••• 5678" required class="w-full bg-stone-800 text-white rounded-lg p-2.5 border border-stone-700">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-slate-300 font-semibold mb-1">Vencimiento:</label>
+                        <input type="text" placeholder="MM/YY" required class="w-full bg-stone-800 text-white rounded-lg p-2.5 border border-stone-700">
+                    </div>
+                    <div>
+                        <label class="block text-slate-300 font-semibold mb-1">CVV:</label>
+                        <input type="password" maxlength="4" placeholder="•••" required class="w-full bg-stone-800 text-white rounded-lg p-2.5 border border-stone-700">
+                    </div>
+                </div>
+
+                <button type="submit" id="btnPaySubmit" class="w-full bg-red-600 hover:bg-red-700 text-white font-extrabold py-3 rounded-xl transition-all shadow-lg text-sm">
+                    Autorizar Pago Seguro
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        /* =============================================================
+           ULTRA RELAXING LO-FI JAZZ & CHILLHOP WEB AUDIO SYNTHESIZER
+           ============================================================= */
+        class RelaxingAudioEngine {
+            constructor() {
+                this.ctx = null;
+                this.isPlaying = false;
+                this.currentTrack = 'lofi'; // 'lofi', 'rain', 'jazz'
+                this.volume = 0.4;
+                this.isMuted = false;
+                this.loopTimer = null;
+                this.masterGain = null;
+                this.noiseNode = null;
+                this.step = 0;
+            }
+
+            initCtx() {
+                if (!this.ctx) {
+                    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioContextClass();
+                }
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+
+            togglePlay() {
+                this.initCtx();
+                if (this.isPlaying) {
+                    this.pause();
+                } else {
+                    this.play();
+                }
+            }
+
+            play() {
+                this.isPlaying = true;
+                this.updateUI();
+
+                // Setup Master Gain
+                this.masterGain = this.ctx.createGain();
+                this.masterGain.gain.setValueAtTime(this.isMuted ? 0 : this.volume, this.ctx.currentTime);
+                this.masterGain.connect(this.ctx.destination);
+
+                // Vinyl Crackle & Rain Ambient Generator
+                this.startVinylNoise();
+
+                // Start Organic Chord Sequence
+                this.step = 0;
+                this.triggerNextChord();
+                this.loopTimer = setInterval(() => {
+                    if (this.isPlaying) {
+                        this.step++;
+                        this.triggerNextChord();
+                    }
+                }, this.getTempoInterval());
+            }
+
+            pause() {
+                this.isPlaying = false;
+                this.updateUI();
+                if (this.loopTimer) clearInterval(this.loopTimer);
+                if (this.noiseNode) {
+                    try { this.noiseNode.stop(); } catch(e){}
+                }
+            }
+
+            getTempoInterval() {
+                if (this.currentTrack === 'lofi') return 3800; // 65 BPM ambient chord cycle
+                if (this.currentTrack === 'rain') return 4800; // Deep slow piano pads
+                if (this.currentTrack === 'jazz') return 3200; // Coffee shop swing feel
+            }
+
+            triggerNextChord() {
+                if (!this.ctx || !this.isPlaying) return;
+
+                // Rich jazz & lofi chord progressions (Frequencies in Hz)
+                const progressions = {
+                    lofi: [
+                        // Cmaj9, Am9, Dm9, G13 (Fender Rhodes Frequency Warmth)
+                        [130.81, 261.63, 329.63, 392.00, 493.88], // Cmaj9
+                        [110.00, 220.00, 261.63, 329.63, 392.00], // Am9
+                        [146.83, 293.66, 349.23, 440.00, 523.25], // Dm9
+                        [98.00, 196.00, 246.94, 349.23, 440.00]   // G13
+                    ],
+                    rain: [
+                        // Fmaj7, Cmaj7, Em7, Am7
+                        [174.61, 349.23, 440.00, 523.25, 659.25], // Fmaj7
+                        [130.81, 261.63, 329.63, 392.00, 493.88], // Cmaj7
+                        [164.81, 329.63, 392.00, 493.88, 587.33], // Em7
+                        [220.00, 349.23, 440.00, 523.25, 659.25]  // Am7
+                    ],
+                    jazz: [
+                        // Dm7, G7(9), Cmaj7, A7alt
+                        [146.83, 293.66, 349.23, 440.00, 523.25], 
+                        [98.00, 246.94, 293.66, 349.23, 440.00],  
+                        [130.81, 261.63, 329.63, 392.00, 493.88], 
+                        [110.00, 220.00, 277.18, 349.23, 415.30]  
+                    ]
+                };
+
+                const trackChords = progressions[this.currentTrack] || progressions.lofi;
+                const chord = trackChords[this.step % trackChords.length];
+                const now = this.ctx.currentTime;
+
+                // Sub bass warm sine
+                this.playBassTone(chord[0], now, 3.5);
+
+                // Strummed Rhodes / Wurlitzer key tones
+                chord.slice(1).forEach((freq, i) => {
+                    this.playRhodesKey(freq, now + (i * 0.05), 3.2);
+                });
+            }
+
+            playRhodesKey(freq, startTime, duration) {
+                const oscSine = this.ctx.createOscillator();
+                const oscTri = this.ctx.createOscillator();
+                const filter = this.ctx.createBiquadFilter();
+                const gain = this.ctx.createGain();
+
+                oscSine.type = 'sine';
+                oscSine.frequency.setValueAtTime(freq, startTime);
+
+                oscTri.type = 'triangle';
+                oscTri.frequency.setValueAtTime(freq * 1.0015, startTime); // Subtle detune warmth
+
+                // Lowpass filter envelope
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(this.currentTrack === 'rain' ? 650 : 1200, startTime);
+                filter.frequency.exponentialRampToValueAtTime(320, startTime + duration);
+
+                // Smooth ADSR
+                gain.gain.setValueAtTime(0, startTime);
+                gain.gain.linearRampToValueAtTime(0.12, startTime + 0.08);
+                gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+
+                oscSine.connect(filter);
+                oscTri.connect(filter);
+                filter.connect(gain);
+                gain.connect(this.masterGain);
+
+                oscSine.start(startTime);
+                oscTri.start(startTime);
+                oscSine.stop(startTime + duration);
+                oscTri.stop(startTime + duration);
+            }
+
+            playBassTone(freq, startTime, duration) {
+                const osc = this.ctx.createOscillator();
+                const filter = this.ctx.createBiquadFilter();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq * 0.5, startTime); // Octave down sub
+
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(220, startTime);
+
+                gain.gain.setValueAtTime(0, startTime);
+                gain.gain.linearRampToValueAtTime(0.16, startTime + 0.1);
+                gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(this.masterGain);
+
+                osc.start(startTime);
+                osc.stop(startTime + duration);
+            }
+
+            startVinylNoise() {
+                if (this.noiseNode) {
+                    try { this.noiseNode.stop(); } catch(e){}
+                }
+
+                const bufferSize = this.ctx.sampleRate * 2;
+                const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+
+                for (let i = 0; i < bufferSize; i++) {
+                    const white = Math.random() * 2 - 1;
+                    const pop = Math.random() > 0.998 ? (Math.random() * 0.25 - 0.12) : 0;
+                    data[i] = (white * 0.04) + pop;
+                }
+
+                this.noiseNode = this.ctx.createBufferSource();
+                this.noiseNode.buffer = buffer;
+                this.noiseNode.loop = true;
+
+                const noiseFilter = this.ctx.createBiquadFilter();
+                noiseFilter.type = 'bandpass';
+                noiseFilter.frequency.value = this.currentTrack === 'rain' ? 1400 : 900;
+                noiseFilter.Q.value = 1.2;
+
+                const noiseGain = this.ctx.createGain();
+                noiseGain.gain.value = this.currentTrack === 'rain' ? 0.05 : 0.02;
+
+                this.noiseNode.connect(noiseFilter);
+                noiseFilter.connect(noiseGain);
+                noiseGain.connect(this.masterGain);
+
+                this.noiseNode.start();
+            }
+
+            changeTrack(trackKey) {
+                this.currentTrack = trackKey;
+                if (this.isPlaying) {
+                    this.pause();
+                    this.play();
+                }
+            }
+
+            setVolume(val) {
+                this.volume = parseFloat(val);
+                if (this.masterGain && !this.isMuted) {
+                    this.masterGain.gain.setValueAtTime(this.volume, this.ctx.currentTime);
+                }
+            }
+
+            toggleMute() {
+                this.isMuted = !this.isMuted;
+                if (this.masterGain) {
+                    this.masterGain.gain.setValueAtTime(this.isMuted ? 0 : this.volume, this.ctx.currentTime);
+                }
+                const muteIcon = document.getElementById('muteIcon');
+                if (muteIcon) {
+                    muteIcon.className = this.isMuted ? 'fa-solid fa-volume-xmark text-red-400' : 'fa-solid fa-volume-high';
+                }
+            }
+
+            updateUI() {
+                const playIcon = document.getElementById('playIcon');
+                const wave1 = document.getElementById('wave1');
+                const wave2 = document.getElementById('wave2');
+                const wave3 = document.getElementById('wave3');
+                const wave4 = document.getElementById('wave4');
+
+                if (this.isPlaying) {
+                    if (playIcon) playIcon.className = 'fa-solid fa-pause';
+                    if (wave1) wave1.className = 'w-1 bg-brand-orange rounded-full bar-anim-1';
+                    if (wave2) wave2.className = 'w-1 bg-brand-orange rounded-full bar-anim-2';
+                    if (wave3) wave3.className = 'w-1 bg-brand-orange rounded-full bar-anim-3';
+                    if (wave4) wave4.className = 'w-1 bg-brand-orange rounded-full bar-anim-4';
+                } else {
+                    if (playIcon) playIcon.className = 'fa-solid fa-play ml-0.5';
+                    if (wave1) wave1.className = 'w-1 bg-brand-orange/40 rounded-full h-2';
+                    if (wave2) wave2.className = 'w-1 bg-brand-orange/40 rounded-full h-3';
+                    if (wave3) wave3.className = 'w-1 bg-brand-orange/40 rounded-full h-1';
+                    if (wave4) wave4.className = 'w-1 bg-brand-orange/40 rounded-full h-2';
+                }
+            }
+        }
+
+        const audioEngine = new RelaxingAudioEngine();
+
+        /* =============================================================
+           STREET KICKS STORE DATA & LOGIC
+           ============================================================= */
+
+        // 4 Featured Homepage Sneakers Data
+        let featuredSneakers = [
+            {
+                id: 'feat-1',
+                name: "Nike Air Force 1 '07",
+                brand: "Nike",
+                price: 109990,
+                tag: "Más Vendido",
+                image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=600&q=80",
+                sizes: ["39 EU", "40 EU", "41 EU", "42 EU", "43 EU"]
+            },
+            {
+                id: 'feat-2',
+                name: "Nike Air Max 95 OG",
+                brand: "Nike",
+                price: 149990,
+                tag: "Icono Retro",
+                image: "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=600&q=80",
+                sizes: ["40 EU", "41 EU", "42 EU", "43 EU"]
+            },
+            {
+                id: 'feat-3',
+                name: "Adidas Campus 00s Core",
+                brand: "Adidas",
+                price: 89990,
+                tag: "Tendencia Urban",
+                image: "https://images.unsplash.com/photo-1518002171953-a080ee817e1f?auto=format&fit=crop&w=600&q=80",
+                sizes: ["38 EU", "39 EU", "40 EU", "41 EU", "42 EU"]
+            },
+            {
+                id: 'feat-4',
+                name: "Air Jordan 4 Retro OG",
+                brand: "Jordan",
+                price: 189990,
+                tag: "Edición Limitada",
+                image: "https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=600&q=80",
+                sizes: ["41 EU", "42 EU", "43 EU", "44 EU"]
+            }
+        ];
+
+        // Extended Sneaker Catalog
+        const catalogSneakers = [
+            { name: "Yeezy Boost 350 V2", brand: "Adidas", price: 219990, image: "https://images.unsplash.com/photo-1584735175315-9d5df23860e6?auto=format&fit=crop&w=600&q=80" },
+            { name: "Nike Dunk Low Panda", brand: "Nike", price: 119990, image: "https://images.unsplash.com/photo-1597045566677-8cf032ed6634?auto=format&fit=crop&w=600&q=80" },
+            { name: "New Balance 9060 Rain", brand: "New Balance", price: 159990, image: "https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=600&q=80" },
+            { name: "Asics Gel-Kayano 14", brand: "Asics", price: 139990, image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&w=600&q=80" }
+        ];
+
+        // 8 Global Footwear Categories Data
+        const footwearCategories = [
+            { title: "Everyday Lifestyle", count: "42 Modelos", icon: "fa-shoe-prints", desc: "Comodidad urbana diaria" },
+            { title: "Retro Basketball", count: "28 Modelos", icon: "fa-basketball", desc: "Clásicos de la cancha de los 80s/90s" },
+            { title: "Skate & Streetwear", count: "35 Modelos", icon: "fa-skateboard", desc: "Suelas vulcanizadas y estilo tabla" },
+            { title: "Running & Performance", count: "19 Modelos", icon: "fa-person-running", desc: "Máxima amortiguación reactiva" },
+            { title: "High-Top Classics", count: "24 Modelos", icon: "fa-socks", desc: "Siluetas de caña alta icónicas" },
+            { title: "Terrace & Casual", count: "31 Modelos", icon: "fa-beer-mug-empty", desc: "Estilo retro europeo de estadio" },
+            { title: "Platform & Chunky", count: "22 Modelos", icon: "fa-layer-group", desc: "Suelas gruesas de alto impacto" },
+            { title: "Limited Drop Exclusives", count: "15 Modelos", icon: "fa-fire", desc: "Raras colaboraciones globales" }
+        ];
+
+        // Global Cart State
+        let cart = [];
+
+        // Format Chilean CLP Currency
+        function formatCLP(val) {
+            return '$' + val.toLocaleString('es-CL') + ' CLP';
+        }
+
+        // Render 4 Featured Sneakers
+        function renderFeaturedSneakers() {
+            const grid = document.getElementById('featuredGrid');
+            grid.innerHTML = featuredSneakers.map((item, index) => `
+                <div class="glass-card rounded-2xl p-4 flex flex-col justify-between border border-stone-800 hover:border-brand-orange/40 transition-all group">
+                    <div>
+                        <div class="relative h-48 rounded-xl overflow-hidden mb-3 bg-stone-900 flex items-center justify-center">
+                            <span class="absolute top-2 left-2 z-10 bg-brand-orange text-stone-950 font-black text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider">
+                                ${item.tag}
+                            </span>
+                            <img id="featImg-${index}" src="${item.image}" alt="${item.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80'">
+                        </div>
+
+                        <span class="text-[11px] text-brand-orange font-bold uppercase tracking-wider">${item.brand}</span>
+                        <h3 class="text-base font-extrabold text-white leading-snug">${item.name}</h3>
+                        <p class="text-sm font-black text-brand-orange mt-1">${formatCLP(item.price)}</p>
+                    </div>
+
+                    <div class="mt-4 space-y-2">
+                        <!-- Custom Upload Image Button -->
+                        <label class="block text-center bg-stone-800 hover:bg-stone-700 text-slate-300 text-[11px] py-1.5 px-2 rounded-lg cursor-pointer border border-stone-700 transition-colors">
+                            <i class="fa-solid fa-camera text-brand-orange mr-1"></i> Subir Foto Personalizada
+                            <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(event, ${index})">
+                        </label>
+
+                        <button onclick="addToCart('${item.name}', ${item.price}, featuredSneakers[${index}].image)" class="w-full bg-brand-orange hover:bg-brand-orangeDark text-stone-950 font-black py-2.5 rounded-xl transition-colors text-xs flex items-center justify-center gap-1.5 shadow-md">
+                            <i class="fa-solid fa-cart-plus"></i> Añadir al Carrito
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Handle Image Upload for featured products
+        function handleImageUpload(e, index) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(uploadEvent) {
+                    featuredSneakers[index].image = uploadEvent.target.result;
+                    renderFeaturedSneakers();
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Render Extended Catalog
+        function renderExtendedCatalog(filter = 'all') {
+            const grid = document.getElementById('extendedCatalogGrid');
+            const items = filter === 'all' ? catalogSneakers : catalogSneakers.filter(i => i.brand === filter);
+            grid.innerHTML = items.map(item => `
+                <div class="glass-card rounded-2xl p-4 flex flex-col justify-between border border-stone-800">
+                    <div>
+                        <div class="h-40 rounded-xl overflow-hidden mb-3 bg-stone-900">
+                            <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover">
+                        </div>
+                        <span class="text-[10px] text-slate-400 uppercase tracking-widest">${item.brand}</span>
+                        <h4 class="font-bold text-white text-sm">${item.name}</h4>
+                        <p class="text-xs font-black text-brand-orange mt-1">${formatCLP(item.price)}</p>
+                    </div>
+                    <button onclick="addToCart('${item.name}', ${item.price}, '${item.image}')" class="mt-3 bg-stone-800 hover:bg-brand-orange hover:text-black text-white font-bold py-2 rounded-lg transition-all text-xs">
+                        Agregar +
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Render 8 Global Categories
+        function renderCategories() {
+            const grid = document.getElementById('categoriesGrid');
+            grid.innerHTML = footwearCategories.map(cat => `
+                <div class="glass-card rounded-2xl p-5 border border-stone-800 hover:border-brand-orange/40 transition-all cursor-pointer group">
+                    <div class="w-12 h-12 rounded-xl bg-brand-orange/10 border border-brand-orange/30 text-brand-orange flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid ${cat.icon}"></i>
+                    </div>
+                    <span class="text-[10px] text-brand-orange font-bold uppercase tracking-widest">${cat.count}</span>
+                    <h3 class="text-lg font-black text-white font-display mt-0.5">${cat.title}</h3>
+                    <p class="text-xs text-slate-400 mt-1">${cat.desc}</p>
+                </div>
+            `).join('');
+        }
+
+        // Filter catalog tabs
+        function filterCatalog(brand) {
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.className = 'cat-btn bg-stone-800 text-slate-300 px-4 py-2 rounded-xl transition-all';
+            });
+            event.target.className = 'cat-btn active bg-brand-orange text-stone-950 px-4 py-2 rounded-xl font-bold';
+            renderExtendedCatalog(brand);
+        }
+
+        /* SVG Customizer Logic */
+        let activePart = 'midsole';
+        function selectPart(partId) {
+            activePart = partId;
+            const names = {
+                'sole': 'Suela Exterior',
+                'midsole': 'Midsole / Suela Media',
+                'upper': 'Capellada Principal',
+                'collar': 'Cuello & Forro',
+                'logo': 'Swoosh / Logo Accent',
+                'laces': 'Cordones'
+            };
+            document.getElementById('activePartName').innerText = names[partId] || partId;
+        }
+
+        function applyColor(hexColor) {
+            const el = document.getElementById(`part-${activePart}`);
+            if (el) {
+                if (activePart === 'laces') {
+                    el.setAttribute('stroke', hexColor);
+                } else {
+                    el.setAttribute('fill', hexColor);
+                }
+            }
+        }
+
+        function resetCustomizer() {
+            document.getElementById('part-sole').setAttribute('fill', '#FFFFFF');
+            document.getElementById('part-midsole').setAttribute('fill', '#E8A88A');
+            document.getElementById('part-upper').setAttribute('fill', '#262220');
+            document.getElementById('part-collar').setAttribute('fill', '#3B332E');
+            document.getElementById('part-logo').setAttribute('fill', '#E8A88A');
+            document.getElementById('part-laces').setAttribute('stroke', '#FFFFFF');
+        }
+
+        function addCustomToCart() {
+            addToCart('Sneaker SVG Custom Edition', 139990, 'https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=600&q=80');
+        }
+
+        /* Quiz Logic */
+        function nextQuizStep(style) {
+            const recommendations = {
+                streetwear: "Te recomendamos la silueta **Adidas Campus 00s** o **Air Jordan 4 Retro**. Perfectas para outfits holgados.",
+                minimal: "Tu match perfecto es el **Nike Air Force 1 '07 All-White**. Un clásico atemporal indispensable.",
+                retro: "Los **Nike Air Max 95 OG** o siluetas Jordan Retro son tu mejor elección.",
+                runner: "Te sugerimos **New Balance 9060** o **Asics Gel-Kayano 14** para máximo confort."
+            };
+            document.getElementById('quizStep1').classList.add('hidden');
+            const res = document.getElementById('quizResult');
+            res.classList.remove('hidden');
+            document.getElementById('quizResultText').innerText = recommendations[style];
+        }
+
+        function resetQuiz() {
+            document.getElementById('quizStep1').classList.remove('hidden');
+            document.getElementById('quizResult').classList.add('hidden');
+        }
+
+        /* Cart & Webpay Modal System */
+        function addToCart(name, price, image) {
+            const existing = cart.find(i => i.name === name);
+            if (existing) {
+                existing.qty++;
+            } else {
+                cart.push({ name, price, image, qty: 1 });
+            }
+            updateCartUI();
+            toggleCartModal(true);
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const count = cart.reduce((acc, i) => acc + i.qty, 0);
+            const total = cart.reduce((acc, i) => acc + (i.price * i.qty), 0);
+            const discount = total > 0 ? Math.round(total * 0.15) : 0;
+            const finalTotal = total - discount;
+
+            document.getElementById('cartBadge').innerText = count;
+            document.getElementById('cartTotalHeader').innerText = formatCLP(finalTotal);
+
+            const list = document.getElementById('cartItemsList');
+            if (cart.length === 0) {
+                list.innerHTML = '<p class="text-xs text-slate-500 text-center py-8">Tu carrito está vacío.</p>';
+            } else {
+                list.innerHTML = cart.map((item, idx) => `
+                    <div class="flex items-center justify-between bg-stone-950 p-3 rounded-xl border border-stone-800">
+                        <div class="flex items-center gap-3">
+                            <img src="${item.image}" class="w-12 h-12 object-cover rounded-lg">
+                            <div>
+                                <h5 class="text-xs font-bold text-white">${item.name}</h5>
+                                <p class="text-[11px] text-brand-orange font-black">${formatCLP(item.price)} x ${item.qty}</p>
+                            </div>
+                        </div>
+                        <button onclick="removeFromCart(${idx})" class="text-slate-500 hover:text-red-400 text-xs">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+
+            document.getElementById('cartSubtotal').innerText = formatCLP(total);
+            document.getElementById('cartDiscount').innerText = '-' + formatCLP(discount);
+            document.getElementById('cartFinalTotal').innerText = formatCLP(finalTotal);
+            document.getElementById('webpayAmount').innerText = formatCLP(finalTotal);
+        }
+
+        function toggleCartModal(forceOpen = false) {
+            const modal = document.getElementById('cartModal');
+            if (forceOpen) {
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.toggle('hidden');
+            }
+        }
+
+        function openWebpayModal() {
+            if (cart.length === 0) return;
+            toggleCartModal();
+            document.getElementById('webpayModal').classList.remove('hidden');
+        }
+
+        function closeWebpayModal() {
+            document.getElementById('webpayModal').classList.add('hidden');
+        }
+
+        function processWebpayPayment(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnPaySubmit');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando Transbank Webpay...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                btn.innerHTML = 'Autorizar Pago Seguro';
+                btn.disabled = false;
+                closeWebpayModal();
+                cart = [];
+                updateCartUI();
+                
+                // Show order success modal notice
+                const code = 'SK-CLP-' + Math.floor(100000 + Math.random() * 900000);
+                const msg = document.createElement('div');
+                msg.className = 'fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4';
+                msg.innerHTML = `
+                    <div class="glass-card rounded-3xl p-8 max-w-sm w-full text-center space-y-4 border border-brand-orange">
+                        <div class="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 text-3xl flex items-center justify-center mx-auto">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                        <h3 class="text-2xl font-black text-white font-display">¡Pago Aprobado!</h3>
+                        <p class="text-xs text-slate-300">Tu orden fue procesada exitosamente vía Transbank Webpay Plus.</p>
+                        <div class="bg-stone-900 p-3 rounded-xl text-xs font-mono text-brand-orange font-bold">
+                            CÓDIGO PEDIDO: ${code}
+                        </div>
+                        <button onclick="this.parentElement.parentElement.remove()" class="w-full bg-brand-orange text-black font-extrabold py-3 rounded-xl text-xs">
+                            Continuar Comprando
+                        </button>
+                    </div>
+                `;
+                document.body.appendChild(msg);
+            }, 2000);
+        }
+
+        /* Ambient Canvas Particle Animation */
+        function initBgCanvas() {
+            const canvas = document.getElementById('bgCanvas');
+            const ctx = canvas.getContext('2d');
+            let width = canvas.width = window.innerWidth;
+            let height = canvas.height = window.innerHeight;
+
+            window.addEventListener('resize', () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            });
+
+            const particles = Array.from({ length: 45 }, () => ({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                radius: Math.random() * 2 + 0.5,
+                vy: -Math.random() * 0.4 - 0.1,
+                alpha: Math.random() * 0.5 + 0.1
+            }));
+
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+                particles.forEach(p => {
+                    p.y += p.vy;
+                    if (p.y < 0) p.y = height;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(232, 168, 138, ${p.alpha})`;
+                    ctx.fill();
+                });
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        // Initialize application on window load
+        window.onload = function() {
+            initBgCanvas();
+            renderFeaturedSneakers();
+            renderExtendedCatalog();
+            renderCategories();
+            updateCartUI();
+        };
+    </script>
+</body>
+</html>
